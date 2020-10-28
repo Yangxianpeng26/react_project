@@ -1,16 +1,35 @@
 import React, { Component } from "react";
 
 import "./index.css";
-import { NavBar, Icon, InputItem, Button, WingBlank, Modal } from "antd-mobile";
+import { NavBar, Icon, InputItem, WingBlank, Modal, Toast } from "antd-mobile";
 
 import { createForm } from "rc-form";
 //引入api
 import { reqVerifyPhone } from "@api/regist";
+import VerifyButton from "@comps/VerifyButton";
 
 class VerifyPhone extends Component {
   state = {
     isDisabled: true,
   };
+
+  componentDidMount() {
+    Modal.alert(
+      "注册协议及隐私政策",
+      <span className="policy-text">
+        在您注册成为硅谷用户的过程中，您需要完成我们的注册流程并通过点击同意的形式在线签署以下协议，
+        <strong className="policy-strong-text">
+          请您务必仔细阅读、充分理解协议中的条款内容后再点击同意（尤其是以粗体并下划线标识的条款，因为这些条款可能会明确您应履行的义务或对您的权利有所限制）
+        </strong>
+        ：<span className="policy-content">《硅谷用户注册协议》</span>
+        <span className="policy-content">《硅谷隐私政策》</span>
+      </span>,
+      [
+        { text: "不同意", onPress: () => console.log("cancel") },
+        { text: "同意", style: { backgroundColor: "red", color: "#fff" } },
+      ]
+    );
+  }
 
   // 当用户输入数据时就会触发
   validator = (rule, value, callback) => {
@@ -33,43 +52,31 @@ class VerifyPhone extends Component {
     callback();
   };
 
+  // 还要验证手机号
   //发请求
   //写完就post报错因为服务器是5000，现在是3000去uitlis改变baseUrl,改完跨域了在packages.json proxy:"http://5000"
-  next = async () => {
+  VerifyPhone = async () => {
     try {
       // 获取单个表单项的值
       const phone = this.props.form.getFieldValue("phone");
       // 获取多个表单项的值
       // const value2 = this.props.form.getFieldsValue();
-      const result = await reqVerifyPhone(phone);
-      // 请求成功
-      console.log("success", result);
+      await reqVerifyPhone(phone);
+
+      // 请求成功--手机号不存在
+      //提示弹框--确认请求短信验证码
     } catch (e) {
-      // 请求失败
-      console.log("err", e);
+      // 请求失败--手机号存在
+      Toast.fail(e, 3);
+      //提示弹框--确认请求短信验证码
     }
   };
 
-  componentDidMount() {
-    /*  Modal.alert(
-      "注册协议及隐私政策",
-      <span className="policy-text">
-        在您注册成为硅谷用户的过程中，您需要完成我们的注册流程并通过点击同意的形式在线签署以下协议，
-        <strong className="policy-strong-text">
-          请您务必仔细阅读、充分理解协议中的条款内容后再点击同意（尤其是以粗体并下划线标识的条款，因为这些条款可能会明确您应履行的义务或对您的权利有所限制）
-        </strong>
-        ：<span className="policy-content">《硅谷用户注册协议》</span>
-        <span className="policy-content">《硅谷隐私政策》</span>
-      </span>,
-      [
-        { text: "不同意", onPress: () => console.log("cancel") },
-        { text: "同意", style: { backgroundColor: "red", color: "#fff" } },
-      ]
-    ); */
-  }
   render() {
     const { isDisabled } = this.state;
+    // form属性：由createForm高阶组件传递而来
     const { getFieldProps } = this.props.form;
+
     return (
       <div>
         <NavBar
@@ -95,14 +102,11 @@ class VerifyPhone extends Component {
               </div>
             </InputItem>
           </div>
-          <Button
-            onClick={this.next}
+          <VerifyButton
             disabled={isDisabled}
-            className="warning-btn"
-            type="warning"
-          >
-            下一步
-          </Button>
+            callback={this.VerifyPhone}
+            btnText="下一步"
+          />
         </WingBlank>
       </div>
     );

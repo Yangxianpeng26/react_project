@@ -53,9 +53,9 @@ request.interceptors.response.use(
       // 服务器返回了响应，但是响应是失败的
       // 401(Unauthorization 未授权，没有权限访问)  没有token 和 token失效或过期
       // 404（找不到：请求地址写错了）  403(禁止访问forbidden)  500（服务器内部错误）
-      if (messages[error.pesponse.status]) {
-        console.log(error.pesponse);
-        message = messages[error.pesponse.status];
+      if (messages[error.response.status]) {
+        console.log(error.response);
+        message = messages[error.response.status];
       }
     } else {
       // 服务器没有返回响应
