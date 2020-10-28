@@ -7,9 +7,9 @@ module.exports = {
     alias: {
       "@redux": path.resolve(__dirname, "./src/redux/"),
       "@uitils": path.resolve(__dirname, "./src/uitils/"),
-      "@config": path.resolve(__dirname, "./src/config/"),
       "@pages": path.resolve(__dirname, "./src/pages/"),
       "@comps": path.resolve(__dirname, "./src/components/"),
+      "@api": path.resolve(__dirname, "./src/api/"),
     },
   },
   style: {
