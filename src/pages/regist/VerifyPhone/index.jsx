@@ -33,19 +33,19 @@ class VerifyPhone extends Component {
     callback();
   };
 
+  //发请求
+  //写完就post报错因为服务器是5000，现在是3000去uitlis改变baseUrl,改完跨域了在packages.json proxy:"http://5000"
   next = async () => {
     try {
       // 获取单个表单项的值
       const phone = this.props.form.getFieldValue("phone");
-      // 获取所有表单项的值
+      // 获取多个表单项的值
       // const value2 = this.props.form.getFieldsValue();
       const result = await reqVerifyPhone(phone);
-
       // 请求成功
       console.log("success", result);
     } catch (e) {
       // 请求失败
-
       console.log("err", e);
     }
   };
@@ -95,7 +95,12 @@ class VerifyPhone extends Component {
               </div>
             </InputItem>
           </div>
-          <Button disabled={isDisabled} className="warning-btn" type="warning">
+          <Button
+            onClick={this.next}
+            disabled={isDisabled}
+            className="warning-btn"
+            type="warning"
+          >
             下一步
           </Button>
         </WingBlank>
