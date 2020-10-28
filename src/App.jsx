@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 
-import "./App.css";
-
-import { BrowserRouter as Router } from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+//引入路由
+import routes from "./config/routes";
 
 import "antd-mobile/dist/antd-mobile.css";
 
@@ -10,7 +10,11 @@ export default class App extends Component {
   render() {
     return (
       <Router>
-        <h1 className="app"> App。。</h1>
+        <Switch>
+          {routes.map((route) => {
+            return <Route {...route} key={route.path}></Route>;
+          })}
+        </Switch>
       </Router>
     );
   }

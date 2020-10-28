@@ -5,9 +5,11 @@ module.exports = {
   webpack: {
     // 配置路径别名：将来写路径可以简写
     alias: {
-      "@redux": path.resolve(__dirname, "/src/redux/"),
-      "@uitils": path.resolve(__dirname, "/src/uitils/"),
-      "@config": path.resolve(__dirname, "/src/config/"),
+      "@redux": path.resolve(__dirname, "./src/redux/"),
+      "@uitils": path.resolve(__dirname, "./src/uitils/"),
+      "@config": path.resolve(__dirname, "./src/config/"),
+      "@pages": path.resolve(__dirname, "./src/pages/"),
+      "@comps": path.resolve(__dirname, "./src/components/"),
     },
   },
   style: {
