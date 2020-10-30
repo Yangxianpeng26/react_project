@@ -7,7 +7,7 @@ import { createForm } from "rc-form";
 //引入api
 import { reqVerifyPhone } from "@api/regist";
 import VerifyButton from "@comps/VerifyButton";
-import {reqSendCode} from "@api/login";
+import { reqSendCode } from "@api/login";
 
 class VerifyPhone extends Component {
   state = {
@@ -43,9 +43,7 @@ class VerifyPhone extends Component {
           // 发送请求 请求短信验证码
           await reqSendCode(phone);
           //跳转页面就验证码页面
-          this.props.history.push("/regist/verifycode");
-          
-          
+          this.props.history.push("/regist/verifycode", phone);
         },
       },
     ]);

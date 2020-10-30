@@ -7,8 +7,19 @@ export const reqVerifyPhone = (phone) => {
   return request({
     method: "POST",
     url: `${url_prefix}/verify_phone`,
-    data:{
+    data: {
       phone,
-    }
+    },
+  });
+};
+
+export const reqVerifyCode = (phone, code) => {
+  return request({
+    method: "POST",
+    url: `${url_prefix}/verify_code`,
+    data: {
+      phone,
+      code,
+    },
   });
 };

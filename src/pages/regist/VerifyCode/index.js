@@ -1,14 +1,108 @@
 import React, { Component } from "react";
-import { NavBar, Icon, WingBlank, InputItem, Button } from "antd-mobile";
+import { NavBar, Icon, WingBlank, InputItem, Button, Modal } from "antd-mobile";
+import { createForm } from "rc-form";
+import { reqSendCode } from "@api/login";
+import { reqVerifyCode } from "@api/regist";
 
 import msg from "./msg.png";
 import "./index.css";
 
-export default class VeifyCode extends Component {
+//倒计时
+const TOTAL_TIML = 20;
+class VeifyCode extends Component {
+  state = {
+    //决定是否显示的获取验证码
+    isSendCode: true,
+    //倒计算时间
+    time: TOTAL_TIML,
+    isDisabled: true,
+  };
+
+  //发送验证码
+  sendCode = async () => {
+    const phone = this.props.location.state;
+    Modal.alert("", `我们将发送短信/语音验证码至：${phone}`, [
+      { text: "不同意" },
+      {
+        text: "同意",
+        style: { backgroundColor: "red", color: "#fff" },
+        onPress: async () => {
+          // 发送请求 请求短信验证码
+          await reqSendCode(phone);
+          this.setState({
+            isSendCode: true,
+          });
+          // 重新开启定时器
+          this.setTimer();
+        },
+      },
+    ]);
+  };
+  //验证表单
+  validator = (rule, value, callback) => {
+    const reg = /^[0-9]{6}$/;
+
+    let isDisabled = true;
+
+    if (reg.test(value)) {
+      isDisabled = false;
+    }
+
+    this.setState({
+      isDisabled,
+    });
+    callback();
+  };
+
+  componentDidMount() {
+    this.setTimer();
+  }
+
+  setTimer = () => {
+    this.timer = setInterval(() => {
+      const time = this.state.time - 1;
+      if (time <= 0) {
+        clearInterval(this.timer);
+        this.setState({
+          isSendCode: false,
+          time: TOTAL_TIML,
+        });
+        return;
+      }
+      this.setState({
+        time,
+      });
+    }, 1000);
+  };
+
+  componentWillUnmount() {
+    clearInterval(this.timer);
+  }
+  next = async () => {
+    const phone = this.props.location.state;
+
+    const code = this.props.form.getFieldValue("code");
+    //验证是否正确
+    await reqVerifyCode(phone, code);
+    this.props.history.push("/regist/verify_code", phone);
+  };
+
+  goback = () => {
+    this.props.history.goBack();
+  };
+
   render() {
+    const { isSendCode, time, isDisabled } = this.state;
+
+    const { getFieldProps } = this.props.form;
+
+    const btnClassName =
+      "verify-code-btn" + (isSendCode ? " verify-code-btn-disabled" : "");
+    const btntext = isSendCode ? `重新发送(${time}s)` : "获取验证码";
     return (
       <div>
         <NavBar
+          onClick={this.goback}
           mode="light"
           icon={<Icon className="left" type="left" />}
           onLeftClick={() => console.log("onLeftClick")}
@@ -21,17 +115,31 @@ export default class VeifyCode extends Component {
             我们将以短信或电话的形式将验证码发送给您，请注意接听0575/025/0592/010等开头的电话
           </p>
           <div className="verify-code-container">
-            <InputItem placeholder="请输入验证码"></InputItem>
-            <button className="verify-code-btn">获取验证码</button>
+            <InputItem
+              {...getFieldProps("code", {
+                rules: [{ validator: this.validator }],
+              })}
+              placeholder="请输入验证码"
+            ></InputItem>
+            <Button className={btnClassName} onClick={this.sendCode}>
+              {btntext}
+            </Button>
           </div>
-          <Button disabled className="warning-btn" type="warning">
+          <Button
+            disabled={isDisabled}
+            className="warning-btn"
+            type="warning"
+            onClick={this.next}
+          >
             下一步
           </Button>
           <span className="verify-code-question">
-            遇到问题 请 <a>联系客服</a>
+            遇到问题?请<a>联系客服</a>
           </span>
         </WingBlank>
       </div>
     );
   }
 }
+
+export default createForm()(VeifyCode);
