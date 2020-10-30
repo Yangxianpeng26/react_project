@@ -4,7 +4,7 @@ import { createForm } from "rc-form";
 import { reqSendCode } from "@api/login";
 import { reqVerifyCode } from "@api/regist";
 
-import msg from "./msg.png";
+import msg from "@assets/imgs/msg.png";
 import "./index.css";
 
 //倒计时
@@ -84,7 +84,7 @@ class VeifyCode extends Component {
     const code = this.props.form.getFieldValue("code");
     //验证是否正确
     await reqVerifyCode(phone, code);
-    this.props.history.push("/regist/verify_code", phone);
+    this.props.history.push("/regist/verifypassword", phone);
   };
 
   goback = () => {
