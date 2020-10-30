@@ -45,6 +45,7 @@ class VerifyPhone extends Component {
           //跳转页面就验证码页面
           this.props.history.push("/regist/verifycode");
           
+          
         },
       },
     ]);
