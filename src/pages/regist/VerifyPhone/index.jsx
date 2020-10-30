@@ -7,6 +7,7 @@ import { createForm } from "rc-form";
 //引入api
 import { reqVerifyPhone } from "@api/regist";
 import VerifyButton from "@comps/VerifyButton";
+import {reqSendCode} from "@api/login";
 
 class VerifyPhone extends Component {
   state = {
@@ -30,6 +31,24 @@ class VerifyPhone extends Component {
       ]
     );
   }
+
+  //发送验证码
+  sendCode = (phone) => {
+    Modal.alert("", `我们将发送短信/语音验证码至：${phone}`, [
+      { text: "不同意" },
+      {
+        text: "同意",
+        style: { backgroundColor: "red", color: "#fff" },
+        onPress: async () => {
+          // 发送请求 请求短信验证码
+          await reqSendCode(phone);
+          //跳转页面就验证码页面
+          this.props.history.push("/regist/verifycode");
+          
+        },
+      },
+    ]);
+  };
 
   // 当用户输入数据时就会触发
   validator = (rule, value, callback) => {
@@ -64,9 +83,11 @@ class VerifyPhone extends Component {
       await reqVerifyPhone(phone);
 
       // 请求成功--手机号不存在
+      this.sendCode(phone);
       //提示弹框--确认请求短信验证码
     } catch (e) {
-      // 请求失败--手机号存在
+      if (e === "fail") return;
+      // 请求失败 - 手机号存在
       Toast.fail(e, 3);
       //提示弹框--确认请求短信验证码
     }
