@@ -15,21 +15,21 @@ class VerifyPhone extends Component {
   };
 
   componentDidMount() {
-    Modal.alert(
-      "注册协议及隐私政策",
-      <span className="policy-text">
-        在您注册成为硅谷用户的过程中，您需要完成我们的注册流程并通过点击同意的形式在线签署以下协议，
-        <strong className="policy-strong-text">
-          请您务必仔细阅读、充分理解协议中的条款内容后再点击同意（尤其是以粗体并下划线标识的条款，因为这些条款可能会明确您应履行的义务或对您的权利有所限制）
-        </strong>
-        ：<span className="policy-content">《硅谷用户注册协议》</span>
-        <span className="policy-content">《硅谷隐私政策》</span>
-      </span>,
-      [
-        { text: "不同意", onPress: () => console.log("cancel") },
-        { text: "同意", style: { backgroundColor: "red", color: "#fff" } },
-      ]
-    );
+    // Modal.alert(
+    //   "注册协议及隐私政策",
+    //   <span className="policy-text">
+    //     在您注册成为硅谷用户的过程中，您需要完成我们的注册流程并通过点击同意的形式在线签署以下协议，
+    //     <strong className="policy-strong-text">
+    //       请您务必仔细阅读、充分理解协议中的条款内容后再点击同意（尤其是以粗体并下划线标识的条款，因为这些条款可能会明确您应履行的义务或对您的权利有所限制）
+    //     </strong>
+    //     ：<span className="policy-content">《硅谷用户注册协议》</span>
+    //     <span className="policy-content">《硅谷隐私政策》</span>
+    //   </span>,
+    //   [
+    //     { text: "不同意", onPress: () => console.log("cancel") },
+    //     { text: "同意", style: { backgroundColor: "red", color: "#fff" } },
+    //   ]
+    // );
   }
 
   //发送验证码
@@ -91,11 +91,17 @@ class VerifyPhone extends Component {
       //提示弹框--确认请求短信验证码
     }
   };
+  goCountryPicker = () => {
+    //跳转
+    this.props.history.push("/common/countrypicker", "/regist/verifyphone");
+  };
 
   render() {
     const { isDisabled } = this.state;
     // form属性：由createForm高阶组件传递而来
     const { getFieldProps } = this.props.form;
+
+    const number = this.props.location.state || "+86";
 
     return (
       <div>
@@ -116,8 +122,11 @@ class VerifyPhone extends Component {
               clear
               placeholder="请输入手机号"
             >
-              <div className="verify-phone-prefix">
-                <span>+86</span>
+              <div
+                className="verify-phone-prefix"
+                onTouchEnd={this.goCountryPicker}
+              >
+                <span>{number}</span>
                 <Icon type="down" />
               </div>
             </InputItem>
